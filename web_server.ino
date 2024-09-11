@@ -10,6 +10,7 @@
 #include "manual.h"
 #include "settings.h"
 #include "autoMode1.h"
+#include "autoMode2.h"
 
 const int led = 5;
 const int air = 16;
@@ -36,80 +37,6 @@ bool isOn = false;
 
 ESP8266WebServer server(80);
 Ticker timer;
-
-void ledOn() {
-  digitalWrite(led, HIGH);
-
-  String output = "{\"state\":" + String(digitalRead(0)) + "}";
-  server.send(200, "application/json", output);
-}
-
-void ledOff() {
-  digitalWrite(led, LOW);
-
-  String output = "{\"state\":" + String(digitalRead(0)) + "}";
-  server.send(200, "application/json", output);
-}
-
-void airOn() {
-  digitalWrite(air, HIGH);
-
-  String output = "{\"state\":" + String(digitalRead(0)) + "}";
-  server.send(200, "application/json", output);
-}
-
-void airOff() {
-  digitalWrite(air, LOW);
-
-  String output = "{\"state\":" + String(digitalRead(0)) + "}";
-  server.send(200, "application/json", output);
-}
-
-void fanOn() {
-  digitalWrite(fan, HIGH);
-
-  String output = "{\"state\":" + String(digitalRead(0)) + "}";
-  server.send(200, "application/json", output);
-}
-
-void fanOff() {
-  digitalWrite(fan, LOW);
-
-  String output = "{\"state\":" + String(digitalRead(0)) + "}";
-  server.send(200, "application/json", output);
-}
-
-void loadAutoModeState() {
-  EEPROM.begin(512);
-  autoModeState = EEPROM.read(110);
-  EEPROM.end();
-}
-
-void toggleAllDevices(bool state) {
-  digitalWrite(led, state ? HIGH : LOW);
-  digitalWrite(air, state ? HIGH : LOW);
-  digitalWrite(fan, state ? HIGH : LOW);
-}
-
-void toggleAutoMode1() {
-  toggleAllDevices(false); // Все устройства в начальной позиции выключены
-
-  timer.attach(7, []() {  // Включает на 12 часов, затем выключает
-    isOn = !isOn;
-    toggleAllDevices(isOn);
-  });
-  handleAuto();
-}
-
-void handleMode() {
-  String automode = server.arg("mode");
-  isAutoMode = true;
-  autoModeState = 1;
-  saveAutoModeState(autoModeState);
-  if (automode = "1") {
-    toggleAutoMode1();
-  }
-}
 
 void setup() {
   pinMode(led, OUTPUT);
