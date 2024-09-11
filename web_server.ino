@@ -28,6 +28,7 @@ bool aeratorState = false;
 bool fanState = false;
 
 bool isAutoMode = true;
+int autoModeState = 1;
 bool isOn = false;
 
 ESP8266WebServer server(80);
@@ -56,6 +57,40 @@ void ledOff() {
 void handleServo() {
   String output = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Document</title><style>* { box-sizing: border-box; padding: 0; margin: 0;  } body {  padding: 30px 100px;  display: flex;  flex-direction: column; align-items: center;  justify-content: flex-start;  gap: 40px;  } h1 {  width: 230px; height: 70px; display: flex;  justify-content: center;  align-items: center;  background-color: #77c9ff;  border-radius: 15px;  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24); } .time { width: 230px; height: 40px; padding: 5px; display: flex;  justify-content: center;  align-items: center;  gap: 15px;  background-color: #fff; border-radius: 15px;  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24); color: #2c3e50; font-size: 20px;  font-weight: 600; text-align: center; } .hours, .mins,  .secs { font-size: 30px;  } .alarm_time { width: 230px; height: 30px; display: flex;  justify-content: center;  align-items: center;  background-color: #fff; border-radius: 15px;  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24); color: #2c3e50; font-size: 20px;  font-weight: 600; text-align: center; } .wrapper {  display: flex;  flex-direction: column; height: 50px; width: 230px; align-items: center;  justify-content: space-between; } .servo {  -webkit-appearance: none; background: -webkit-linear-gradient(left, #77c9ff 0%, #77c9ff 50%, #ccc 50%, #ccc 100%);  width: 100%;  height: 20px; border-radius: 10px;  } .servo::-webkit-slider-thumb {  -webkit-appearance: none; width: 30px;  height: 30px; background-color: #77c9ff;  border-radius: 50%; cursor: pointer;  transition: 0.3s all; } .servo::-webkit-slider-thumb:hover {  transform: scale(1.2);  background-color: #5b9cc7;  } .value {  color: #2c3e50; font-size: 20px;  } .back { width: 230px; height: 40px; font-size: 20px;  font-weight: 600; text-decoration: none;  color: #2c3e50; background-color: #77c9ff;  border-radius: 15px;  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24); display: flex;  justify-content: center;  align-items: center;  transition: 0.3s all; } .back:hover { background-color: #fff; }</style></head><body><h1>Servo control</h1><div class='time'><div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div></div><div class='alarm_time'>00:00 - 00:00</div><div class='wrapper'><input type='range' min='0' max='180' value='90' name='servo1' class='servo'><label for='servo1' class='value'>90&deg;</label></div><div class='wrapper'><input type='range' min='0' max='180' value='90' name='servo1' class='servo'><label for='servo1' class='value'>90&deg;</label></div><div class='wrapper'><input type='range' min='0' max='180' value='90' name='servo1' class='servo'><label for='servo1' class='value'>90&deg;</label></div><div class='wrapper'><input type='range' min='0' max='180' value='90' name='servo1' class='servo'><label for='servo1' class='value'>90&deg;</label></div><a href='/' class='back'>Go Back</a><script>function toggleTime() { const time = new Date();  document.querySelector('.hours').innerText = time.getHours().toString().padStart(2, '0'); document.querySelector('.mins').innerText = time.getMinutes().toString().padStart(2, '0');  document.querySelector('.secs').innerText = time.getSeconds().toString().padStart(2, '0');  } function updateServo(angle, i) {  var xhttp = new XMLHttpRequest(); xhttp.open('GET', '/setServo' + String(i) + '?angle=' + angle, true); xhttp.send(); } document.addEventListener('DOMContentLoaded', function () { const servos = document.querySelectorAll('.servo'); const values = document.querySelectorAll('.value'); servos.forEach((a, i) => {  a.addEventListener('input', (event) => {  const target = event.target;  let value = target.value; updateServo(value, i);  values[i].innerHTML = `${value}&deg;`;  value = (value * 100) / 180;  target.style.background = '-webkit-linear-gradient(left, #77c9ff 0%, #77c9ff ' + value + '%, #ccc ' + value + '%, #ccc 100%)';  }); }); }); function getTime() {  fetch('/getAlarm')  .then(response => response.json())  .then(data => { let start = data.start.split(':').map(num => num.padStart(2, '0')).join(':'); let end = data.end.split(':').map(num => num.padStart(2, '0')).join(':'); const time = new Date();  const currentTime = time.getHours().toString().padStart(2, '0') + ':' + time.getMinutes().toString().padStart(2, '0') + ':' + time.getSeconds().toString().padStart(2, '0');  document.querySelector('.alarm_time').innerText = start.slice(0, 5) + ' - ' + end.slice(0, 5);  if (currentTime >= start && currentTime < end) {  fetch('/LED_ON').then(response => response.json()).then(data => { console.log(currentTime, start);  }); } if (currentTime == end) { fetch('/LED_OFF').then(response => response.json()).then(data => {  console.log(currentTime, end);  }); } }); } function interval() { toggleTime(); getTime();  } window.onload = interval(); setInterval(interval, 1000);</script></body></html>";
   server.send(200, "text/html", output);
+}
+
+void saveAutoModeState(int state) {
+  EEPROM.begin(512);
+  EEPROM.write(110, state);
+  EEPROM.commit();
+  EEPROM.end();
+}
+
+void loadAutoModeState() {
+  EEPROM.begin(512);
+  autoModeState = EEPROM.read(110);
+  EEPROM.end();
+}
+
+void loadSettings() {
+  EEPROM.begin(512);
+  for (int i = 0; i < 32; ++i) {
+    ssid[i] = char(EEPROM.read(i));
+    password[i] = char(EEPROM.read(32 + i));
+  }
+  EEPROM.end();
+
+  if (strlen(ssid) == 0) {
+    strcpy(ssid, defaultSSID);
+  }
+  if (strlen(password) == 0) {
+    strcpy(password, defaultPassword);
+  }
+}
+
+void LightState() {
+  digitalWrite(led, !digitalRead(led));
+  handleLight();
 }
 
 void handleSettings() {
@@ -88,27 +123,6 @@ void handleSaveSettings() {
   }
 }
 
-void loadSettings() {
-  EEPROM.begin(512);
-  for (int i = 0; i < 32; ++i) {
-    ssid[i] = char(EEPROM.read(i));
-    password[i] = char(EEPROM.read(32 + i));
-  }
-  EEPROM.end();
-
-  if (strlen(ssid) == 0) {
-    strcpy(ssid, defaultSSID);
-  }
-  if (strlen(password) == 0) {
-    strcpy(password, defaultPassword);
-  }
-}
-
-void LightState() {
-  digitalWrite(led, !digitalRead(led));
-  handleLight();
-}
-
 void handleTimer() {
   if (server.hasArg("work") && server.hasArg("rest")) {
     String workTime = server.arg("work");
@@ -130,6 +144,8 @@ void handleTimer() {
     Serial.println("Saved On Time: " + String(workHour) + ":" + String(workMinute));
     Serial.println("Saved Off Time: " + String(restHour) + ":" + String(restMinute));
     isAutoMode = false;
+    autoModeState = 0;
+    saveAutoModeState(autoModeState);
     handleLight();
   }
 }
@@ -177,6 +193,8 @@ void toggleAutoMode1() {
 void handleMode() {
   String automode = server.arg("mode");
   isAutoMode = true;
+  autoModeState = 1;
+  saveAutoModeState(autoModeState);
   if (automode = "1") {
     toggleAutoMode1();
   }
@@ -193,6 +211,7 @@ void setup() {
   dht.begin();
 
   loadSettings();
+  loadAutoModeState();
 
   WiFi.begin(ssid, password);
   unsigned long startAttemptTime = millis();
@@ -211,6 +230,12 @@ void setup() {
   WiFi.softAP(defaultSSID, defaultPassword);
   Serial.print("AP IP-адрес: ");
   Serial.println(WiFi.softAPIP());
+
+  if (autoModeState == 1) {
+    isAutoMode = true;
+  } else {
+    isAutoMode = false;
+  }
 
   server.on("/", HTTP_GET, handleRoot);
   server.on("/data", HTTP_GET, handleData);
