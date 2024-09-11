@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 30px;
+        }
+
+        .settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .settings_btn {
+            width: 100px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #2f2f2f;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+            transition: 0.3s all;
+        }
+
+        .settings_btn:hover {
+            background-color: #000;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .song {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .song_btn {
+            width: 230px;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 25px;
+            font-weight: 600;
+            background-color: #2f2f2f;
+            color: #fff;
+            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+            cursor: pointer;
+        }
+
+        .song_btn:active {
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='settings'>
+        <a class='settings_btn' href='/settings'>Wi-Fi</a>
+        <a class='settings_btn' href='/new_ip'>New IP</a>
+    </div>
+    <h1>Piano</h1>
+    <div class='song'>
+        <button id='cant_stop' class='song_btn'>Can't stop</button>
+        <button id='thunderstruck' class='song_btn'>Thunderstruck</button>
+        <button id='happy_birthday' class='song_btn'>Happy Birthday</button>
+        <button id='undertale' class='song_btn'>Undertale</button>
+        <button id='crazy_frog' class='song_btn'>Crazy frog</button>
+        <button id='take_on_me' class='song_btn'>Take On Me</button>
+        <button id='sponge_bob' class='song_btn'>Sponge Bob</button>
+    </div>
+
+    <script>
+        btns = document.querySelectorAll('.btn').forEach((a) => {
+            a.addEventListener('mousedown', () => {
+                fetch('/start_note?note=' + a.id);
+                a.classList.add('active');
+            });
+            a.addEventListener('mouseup', () => {
+                fetch('/stop_note');
+                a.classList.remove('active');
+            });
+        });
+
+        cant_stop = document.getElementById('cant_stop');
+        cant_stop.addEventListener('click', () => {
+            fetch('/play_song?song=' + cant_stop.id);
+        });
+        thunderstruck = document.getElementById('thunderstruck');
+        thunderstruck.addEventListener('click', () => {
+            fetch('/play_song?song=' + thunderstruck.id);
+        });
+        happy_birthday = document.getElementById('happy_birthday');
+        happy_birthday.addEventListener('click', () => {
+            fetch('/play_song?song=' + happy_birthday.id);
+        });
+        undertale = document.getElementById('undertale');
+        undertale.addEventListener('click', () => {
+            fetch('/play_song?song=' + undertale.id);
+        });
+        crazy_frog = document.getElementById('crazy_frog');
+        crazy_frog.addEventListener('click', () => {
+            fetch('/play_song?song=' + crazy_frog.id);
+        });
+        take_on_me = document.getElementById('take_on_me');
+        take_on_me.addEventListener('click', () => {
+            fetch('/play_song?song=' + take_on_me.id);
+        });
+        sponge_bob = document.getElementById('sponge_bob');
+        sponge_bob.addEventListener('click', () => {
+            fetch('/play_song?song=' + sponge_bob.id);
+        });
+    </script>
+</body>
+
+</html>

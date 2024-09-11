@@ -55,38 +55,7 @@
             font-size: 30px;
         }
 
-        .links {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            width: 230px;
-            background-color: #77c9ff;
-            border-radius: 15px;
-            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-        }
-
-        .nav {
-            text-decoration: none;
-            color: #2c3e50;
-            font-size: 20px;
-            width: 100%;
-            height: 30px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.3s all;
-        }
-
-        .nav:hover {
-            background-color: #fff;
-            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-        }
-
-        .alarm {
+        .work {
             width: 230px;
             height: 30px;
             display: flex;
@@ -99,6 +68,83 @@
             font-size: 20px;
             font-weight: 600;
             text-align: center;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 200px;
+            width: 230px;
+            padding: 15px;
+            align-items: center;
+            justify-content: space-between;
+            color: #2c3e50;
+            background-color: #77c9ff;
+            border-radius: 15px;
+            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+        }
+
+        .control {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 25px;
+        }
+
+        .btn {
+            background-color: #fff;
+            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+            border: none;
+            border-radius: 30px;
+            width: 60px;
+            height: 30px;
+            cursor: pointer;
+            padding: 5px;
+            transition: 0.3s all;
+        }
+
+        .btn:before {
+            content: '';
+            display: block;
+            background-color: #000;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 0;
+            transition: 0.3s ease-in;
+        }
+
+        .btn-active {
+            background-color: green;
+        }
+
+        .btn-active:before {
+            margin-left: 30px;
+            background-color: #fff;
+        }
+
+        .back {
+            width: 230px;
+            height: 40px;
+            font-size: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #2c3e50;
+            background-color: #77c9ff;
+            border-radius: 15px;
+            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s all;
+        }
+
+        .back:hover {
+            background-color: #fff;
         }
 
         .work {
@@ -119,20 +165,27 @@
 </head>
 
 <body>
-    <h1>Main page</h1>
+    <h1>Manual control</h1>
     <div class='time'>
         <div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div>
     </div>
     <div class='work'>00:00 - 00:00</div>
-    <div class='links'>
-        <a href='/data' class='nav'>Data</a>
-        <a href='/manual' class='nav'>Manual</a>
-        <a href='/auto_mode' class='nav'>AutoMode</a>
-        <a href='/fan' class='nav'>Fan</a>
-        <a href='/aeration' class='nav'>Aeration</a>
-        <a href='/settings' class='nav'>Settings</a>
-        <a href='/new_ip' class='nav'>New IP</a>
+    <div class='wrapper'>
+        <div class='control'>
+            <h2 class='title'>Light</h2>
+            <div class='btn btn-active'></div>
+        </div>
+        <div class='control'>
+            <h2 class='title'>Aeration</h2>
+            <div class='btn btn-active'></div>
+        </div>
+        <div class='control'>
+            <h2 class='title'>Fan</h2>
+            <div class='btn btn-active'></div>
+        </div>
     </div>
+
+    <a href='/' class='back'>Go Back</a>
 
     <script>
         function toggleTime() {
@@ -153,11 +206,40 @@
                 });
         }
 
+        const controls = document.querySelectorAll('.btn');
         const info = document.querySelector('.work');
+        controls.forEach((a, i) => {
+            a.addEventListener('click', (event) => {
+                control(event.target, i);
+                event.target.classList.toggle('btn-active');
+            });
+        });
+
+        function control(a, i) {
+            switch (i) {
+                case 0:
+                    if (a.classList.contains('btn-active'))
+                        fetch('/LED_ON');
+                    else
+                        fetch('/LED_OFF');
+                    break;
+                case 1:
+                    if (a.classList.contains('btn-active'))
+                        fetch('/AIR_ON');
+                    else
+                        fetch('/AIR_OFF');
+                    break;
+                case 2:
+                    if (a.classList.contains('btn-active'))
+                        fetch('/FAN_ON');
+                    else
+                        fetch('/FAN_OFF');
+                    break;
+            }
+        }
 
         function interval() {
             toggleTime();
-            getInfo();
         }
 
         window.onload = interval();
