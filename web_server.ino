@@ -30,7 +30,7 @@ bool isWork, isManual;
 bool lightState = false;
 bool aeratorState = false;
 bool fanState = false;
-
+bool autoMode1, autoMode2, autoMode3;
 bool isAutoMode = true;
 int autoModeState = 1;
 bool isOn = false;
@@ -51,6 +51,9 @@ void setup() {
   loadSettings();
   loadAutoModeState();
   isManual = true;
+  autoMode1 = false; 
+  autoMode1 = false;
+  autoMode3 = false;
 
   WiFi.begin(ssid, password);
   unsigned long startAttemptTime = millis();
