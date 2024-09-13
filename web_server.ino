@@ -26,7 +26,7 @@ int onHour, onMinute, onSeconds, offHour, offMinute, offSeconds;
 int workHour, workMinute, workSeconds, restHour, restMinute, restSeconds;
 
 int a, b, work, rest;
-bool isWork, isManual;
+bool isWork;
 bool lightState = false;
 bool aeratorState = false;
 bool fanState = false;
@@ -50,7 +50,6 @@ void setup() {
 
   loadSettings();
   loadAutoModeState();
-  isManual = true;
   autoMode1 = false; 
   autoMode1 = false;
   autoMode3 = false;
@@ -103,10 +102,5 @@ void setup() {
 }
 
 void loop() {
-  if (!isManual) {
-    loop_func(b, a, isWork, led, air, fan, work, rest, isAutoMode);
-    delay(1000);
-  } else {
-    server.handleClient(); 
-  }
+  server.handleClient(); 
 }

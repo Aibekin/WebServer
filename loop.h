@@ -2,13 +2,21 @@
 #define LOOP_H
 
 #include <ESP8266WebServer.h>
+#include <Ticker.h>
 
+extern const int led, air, fan;
+extern Ticker timer;
 extern ESP8266WebServer server;
+extern bool isAutoMode, isWork;
+extern int a, b, work, rest;
 
-void loop_func(int &a, int &b, bool &isWork, int led, int air, int fan, int work, int rest, bool isAuto) {
-  if (isAuto) {
-    Serial.println("automode");
-  } else {
+void loop_func() {
+  timer.attach(1, []() {
+    if (isAutoMode) {
+      Serial.println("automode");
+      return;
+    }
+    
     if (isWork) {
       a -= 1;
       digitalWrite(led, HIGH);
@@ -30,8 +38,7 @@ void loop_func(int &a, int &b, bool &isWork, int led, int air, int fan, int work
         b = work;
       }
     }
-  }
-  server.handleClient();
+  }); 
 }
 
 #endif
