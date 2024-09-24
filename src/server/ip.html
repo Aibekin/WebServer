@@ -55,7 +55,7 @@
             font-size: 30px;
         }
 
-        .alarm_time {
+        .work {
             width: 230px;
             height: 30px;
             display: flex;
@@ -97,7 +97,7 @@
     <div class='time'>
         <div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div>
     </div>
-    <div class='alarm_time'>00:00 - 00:00</div>
+    <div class='work'>00:00 - 00:00</div>
     <a href='/' class='back' id='ip'>New IP: </a>
     <a href='/' class='back'>Go Back</a>
     <script>
@@ -117,31 +117,22 @@
             });
         }
 
-        function getTime() {
-            fetch('/getAlarm')
+        const info = document.querySelector('.work');
+
+        function getInfo() {
+            fetch('/getInfo')
                 .then(response => response.json())
                 .then(data => {
-                    let start = data.start.split(':').map(num => num.padStart(2, '0')).join(':');
-                    let end = data.end.split(':').map(num => num.padStart(2, '0')).join(':');
-                    const time = new Date();
-                    const currentTime = time.getHours().toString().padStart(2, '0') + ':' + time.getMinutes().toString().padStart(2, '0') + ':' + time.getSeconds().toString().padStart(2, '0');
-                    document.querySelector('.alarm_time').innerText = start.slice(0, 5) + ' - ' + end.slice(0, 5);
-                    if (currentTime >= start && currentTime < end) {
-                        fetch('/LED_ON').then(response => response.json()).then(data => {
-                            console.log(currentTime, start);
-                        });
-                    }
-                    if (currentTime == end) {
-                        fetch('/LED_OFF').then(response => response.json()).then(data => {
-                            console.log(currentTime, end);
-                        });
-                    }
+                    let work = data.work.split(':').map(num => num.padStart(2, '0')).join(':');
+                    let rest = data.rest.split(':').map(num => num.padStart(2, '0')).join(':');
+                    info.innerText = work + ' - ' + rest;
+                    console.log(work, rest);
                 });
         }
 
         function interval() {
             toggleTime();
-            getTime();
+            getInfo();
         }
 
         function load() {
