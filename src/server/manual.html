@@ -32,44 +32,6 @@
             box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
         }
 
-        .time {
-            width: 230px;
-            height: 40px;
-            padding: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-            color: #2c3e50;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .hours,
-        .mins,
-        .secs {
-            font-size: 30px;
-        }
-
-        .work {
-            width: 230px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-            color: #2c3e50;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-        }
-
         .wrapper {
             display: flex;
             flex-direction: column;
@@ -146,30 +108,11 @@
         .back:hover {
             background-color: #fff;
         }
-
-        .work {
-            width: 230px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-            color: #2c3e50;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-        }
     </style>
 </head>
 
 <body>
     <h1>Manual control</h1>
-    <div class='time'>
-        <div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div>
-    </div>
-    <div class='work'>00:00 - 00:00</div>
     <div class='wrapper'>
         <div class='control'>
             <h2 class='title'>Light</h2>
@@ -188,24 +131,6 @@
     <a href='/' class='back'>Go Back</a>
 
     <script>
-        function toggleTime() {
-            const time = new Date();
-            document.querySelector('.hours').innerText = time.getHours().toString().padStart(2, '0');
-            document.querySelector('.mins').innerText = time.getMinutes().toString().padStart(2, '0');
-            document.querySelector('.secs').innerText = time.getSeconds().toString().padStart(2, '0');
-        }
-
-        function getInfo() {
-            fetch('/getInfo')
-                .then(response => response.json())
-                .then(data => {
-                    let work = data.work.split(':').map(num => num.padStart(2, '0')).join(':');
-                    let rest = data.rest.split(':').map(num => num.padStart(2, '0')).join(':');
-                    info.innerText = work + ' - ' + rest;
-                    console.log(work, rest);
-                });
-        }
-
         const controls = document.querySelectorAll('.btn');
         const info = document.querySelector('.work');
         controls.forEach((a, i) => {
@@ -237,14 +162,6 @@
                     break;
             }
         }
-
-        function interval() {
-            toggleTime();
-            getInfo();
-        }
-
-        window.onload = interval();
-        setInterval(interval, 1000);
     </script>
 </body>
 
