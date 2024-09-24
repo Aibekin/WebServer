@@ -12,8 +12,8 @@ extern int a, b, work, rest;
 
 void loop_func()
 {
-    timer.attach(1, []()
-                 {
+	timer.attach(1, []()
+				 {
     if (isWork) {
       a -= 1;
       digitalWrite(led, HIGH);
