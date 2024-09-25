@@ -114,10 +114,15 @@
 			background-color: #77c9ff;
 			border-radius: 15px;
 			box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+			transition: 0.3s all;
 		}
 
 		.tab-active {
 			display: flex;
+		}
+
+		#tab_auto {
+			gap: 15px;
 		}
 
 		.switcher {
@@ -277,11 +282,16 @@
 		}
 
 		.descr {
-			display: none;
+			opacity: 0;
+			max-height: 0;
+			pointer-events: none;
+			transition: 0.3s all;
 		}
 
 		.descr-active {
-			display: block;
+			opacity: 1;
+			max-height: 270px;
+			pointer-events: auto;
 			position: relative;
 			width: 100%;
 			text-align: start;
@@ -346,7 +356,7 @@
 	<div class='mode'>Автоматический режим: <div class='switcher switcher-active'></div>
 	</div>
 	<div class='tabs'>
-		<div class='tab tab-active'>
+		<div class='tab tab-active' id='tab_auto'>
 			<div class='auto'>
 				<div class='form'>
 					<input type='submit' value='Быстрый рост' class='automode'>
