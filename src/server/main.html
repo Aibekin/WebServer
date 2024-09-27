@@ -86,10 +86,11 @@
 			box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
 		}
 
-		.work {
+		.work_block {
 			width: 230px;
-			height: 30px;
+			height: 50px;
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			background-color: #fff;
@@ -98,22 +99,14 @@
 			color: #2c3e50;
 			font-size: 20px;
 			font-weight: 600;
-			text-align: center;
 		}
 
-		.work {
-			width: 230px;
-			height: 30px;
+		.work,
+		.rest {
+			width: 100px;
 			display: flex;
-			justify-content: center;
 			align-items: center;
-			background-color: #fff;
-			border-radius: 15px;
-			box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
-			color: #2c3e50;
-			font-size: 20px;
-			font-weight: 600;
-			text-align: center;
+			justify-content: space-between;
 		}
 	</style>
 </head>
@@ -123,7 +116,10 @@
 	<div class='time'>
 		<div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div>
 	</div>
-	<div class='work'>00:00 - 00:00</div>
+	<div class='work_block'>
+		<div class='work'><span>On</span><span class='work_time'>00:00</span></div>
+		<div class='rest'><span>Off</span><span class='rest_time'>00:00</span></div>
+	</div>
 	<div class='links'>
 		<a href='/data' class='nav'>Data</a>
 		<a href='/manual' class='nav'>Manual</a>
@@ -146,12 +142,14 @@
 				.then(data => {
 					let work = data.work.split(':').map(num => num.padStart(2, '0')).join(':');
 					let rest = data.rest.split(':').map(num => num.padStart(2, '0')).join(':');
-					info.innerText = work + ' - ' + rest;
+					work_time.innerText = work;
+					rest_time.innerText = rest;
 					console.log(work, rest);
 				});
 		}
 
-		const info = document.querySelector('.work');
+		const work_time = document.querySelector('.work_time');
+		const rest_time = document.querySelector('.rest_time');
 
 		function interval() {
 			toggleTime();

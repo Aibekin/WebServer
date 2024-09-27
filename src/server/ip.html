@@ -55,10 +55,11 @@
 			font-size: 30px;
 		}
 
-		.work {
+		.work_block {
 			width: 230px;
-			height: 30px;
+			height: 50px;
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			background-color: #fff;
@@ -67,7 +68,14 @@
 			color: #2c3e50;
 			font-size: 20px;
 			font-weight: 600;
-			text-align: center;
+		}
+
+		.work,
+		.rest {
+			width: 100px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
 		}
 
 		.back {
@@ -97,7 +105,10 @@
 	<div class='time'>
 		<div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div>
 	</div>
-	<div class='work'>00:00 - 00:00</div>
+	<div class='work_block'>
+		<div class='work'><span>On</span><span class='work_time'>00:00</span></div>
+		<div class='rest'><span>Off</span><span class='rest_time'>00:00</span></div>
+	</div>
 	<a href='/' class='back' id='ip'>New IP: </a>
 	<a href='/' class='back'>Go Back</a>
 	<script>
@@ -117,18 +128,20 @@
 			});
 		}
 
-		const info = document.querySelector('.work');
-
 		function getInfo() {
 			fetch('/getInfo')
 				.then(response => response.json())
 				.then(data => {
 					let work = data.work.split(':').map(num => num.padStart(2, '0')).join(':');
 					let rest = data.rest.split(':').map(num => num.padStart(2, '0')).join(':');
-					info.innerText = work + ' - ' + rest;
+					work_time.innerText = work;
+					rest_time.innerText = rest;
 					console.log(work, rest);
 				});
 		}
+
+		const work_time = document.querySelector('.work_time');
+		const rest_time = document.querySelector('.rest_time');
 
 		function interval() {
 			toggleTime();
