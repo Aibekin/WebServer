@@ -63,15 +63,9 @@
 			border-radius: 15px;
 			box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
 			color: #2c3e50;
-			font-size: 20px;
+			font-size: 30px;
 			font-weight: 600;
 			text-align: center;
-		}
-
-		.hours,
-		.mins,
-		.secs {
-			font-size: 30px;
 		}
 
 		.buttons {
@@ -355,9 +349,7 @@
 <body>
 	<h1>Automode</h1>
 	<div class='block block-hidden'>
-		<div class='time'>
-			<div class='hours'>--</div>:<div class='mins'>--</div>:<div class='secs'>--</div>
-		</div>
+		<div class='time'>On 00:00:00</div>
 		<div class='work_block'>
 			<div class='work'><span>On</span><span class='work_time'>00:00</span></div>
 			<div class='rest'><span>Off</span><span class='rest_time'>00:00</span></div>
@@ -425,26 +417,23 @@
 	<a href='/' class='back'>Go Back</a>
 
 	<script type='module'>
-		function toggleTime() {
-			const time = new Date();
-			document.querySelector('.hours').innerText = time.getHours().toString().padStart(2, '0');
-			document.querySelector('.mins').innerText = time.getMinutes().toString().padStart(2, '0');
-			document.querySelector('.secs').innerText = time.getSeconds().toString().padStart(2, '0');
-		}
-
 		function getInfo() {
 			fetch('/getInfo')
 				.then(response => response.json())
 				.then(data => {
-					let work = data.work.split(':').map(num => num.padStart(2, '0')).join(':');
-					let rest = data.rest.split(':').map(num => num.padStart(2, '0')).join(':');
-					let isWork = data.isWork;
-					work_time.innerText = work;
-					rest_time.innerText = rest;
-					console.log(work, rest, isWork);
+					work = data.work.split(':');
+					rest = data.rest.split(':');
+					isWork = data.isWork;
+					a = data.a;
+					b = data.b;
+					console.log(work, rest, isWork, a, b);
+					work_time.innerText = work.map(num => num.padStart(2, '0')).join(':');
+					rest_time.innerText = rest.map(num => num.padStart(2, '0')).join(':');
 				});
 		}
 
+		let work, rest, isWork, a, b;
+		const time = document.querySelector('.time');
 		const buttons = document.querySelectorAll('.button');
 		const inputs = document.querySelectorAll('.automode');
 		const mores = document.querySelectorAll('.more');
@@ -485,11 +474,14 @@
 		});
 
 		function interval() {
-			toggleTime();
 			getInfo();
+			if (isWork == '0')
+				time.innerText = 'On ' + String(Math.floor(Number(a) / 3600)).toString().padStart(2, '0') + ':' + String(Math.floor((Number(a) % 3600) / 60)).toString().padStart(2, '0') + ':' + String(Number(a) % 60).toString().padStart(2, '0');
+			else if (isWork == '1')
+				time.innerText = 'Off ' + String(Math.floor(Number(b) / 3600)).toString().padStart(2, '0') + ':' + String(Math.floor((Number(b) % 3600) / 60)).toString().padStart(2, '0') + ':' + String(Number(b) % 60).toString().padStart(2, '0');
 		}
 
-		window.onload = interval();
+		window.onload = interval;
 		setInterval(interval, 1000);
 
 	</script>

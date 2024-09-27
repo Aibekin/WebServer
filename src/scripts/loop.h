@@ -20,7 +20,7 @@ void loop_func()
 			digitalWrite(air, HIGH);
 			digitalWrite(fan, HIGH);
 			Serial.println(b);
-			if (b <= 0) {
+			if (b < 0) {
 				isWork = false;
 				b = rest;
 			}
@@ -30,7 +30,7 @@ void loop_func()
 			digitalWrite(air, LOW);
 			digitalWrite(fan, LOW);
 			Serial.println(a);
-			if (a <= 0) {
+			if (a < 0) {
 				isWork = true;
 				a = work;
 			}
